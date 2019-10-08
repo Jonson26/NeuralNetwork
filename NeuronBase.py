@@ -34,7 +34,7 @@ class SimpleNeuron:
         self.value = v
 
     def computeValue(self):
-        self.value = self.value
+        None
         #In this particular case computeValue() does nothing. This method is provided, to allow descendant classes to modify it.
         #It's intended purpose is to modify the value of the neuron, to allow for implementing biases.
 
@@ -42,5 +42,11 @@ class SimpleNeuron:
         x = 0
         while x < len(self.dendrites):
             self.dendrites[x].passValue(self.value)
+            x += 1
+
+    def initDendrites(self, targetNeurons):
+        x = 0
+        while x < len(targetNeurons):
+            self.dendrites.append(Dendrite(1,targetNeurons[x]))
             x += 1
 

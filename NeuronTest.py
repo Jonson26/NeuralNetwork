@@ -1,19 +1,48 @@
 import NeuronBase
 
-outputNeuron = NeuronBase.SimpleNeuron()
+inputLayer = []
 
-middleNeuron = NeuronBase.SimpleNeuron()
-middleNeuron.dendrites = [NeuronBase.Dendrite(1/2, outputNeuron)]
+middleLayerA = []
 
-inputNeuron = NeuronBase.SimpleNeuron()
-inputNeuron.dendrites = [NeuronBase.Dendrite(7/10, middleNeuron)]
+middleLayerB = []
 
-inputNeuron.setValue(1)
-inputNeuron.computeValue()
-inputNeuron.pushValue()
+outputLayer = []
 
-middleNeuron.computeValue()
-middleNeuron.pushValue()
+inputLayer.append(NeuronBase.SimpleNeuron())
 
-outputNeuron.computeValue()
-print(outputNeuron.value)
+i = 0
+while i < 3:
+    middleLayerA.append(NeuronBase.SimpleNeuron())
+    i += 1
+
+i = 0
+while i < 3:
+    middleLayerB.append(NeuronBase.SimpleNeuron())
+    i += 1
+
+outputLayer.append(NeuronBase.SimpleNeuron())
+
+for x in inputLayer:
+    x.initDendrites(middleLayerA)
+
+for x in middleLayerA:
+    x.initDendrites(middleLayerB)
+
+for x in middleLayerB:
+    x.initDendrites(outputLayer)
+
+for x in inputLayer:
+    x.resetValue()
+    x.setValue(1)
+    x.computeValue()
+    x.pushValue() 
+
+for x in middleLayerA:
+    x.computeValue()
+    x.pushValue() 
+
+for x in middleLayerB:
+    x.computeValue()
+    x.pushValue()
+
+print(outputLayer[0].value)
