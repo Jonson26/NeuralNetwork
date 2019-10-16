@@ -1,48 +1,28 @@
 import NeuronBase
 
-inputLayer = []
+inputLayer = NeuronBase.SimpleLayer(1, NeuronBase.SimpleNeuron())
 
-middleLayerA = []
+middleLayerA = NeuronBase.SimpleLayer(3, NeuronBase.SimpleNeuron())
 
-middleLayerB = []
+middleLayerB = NeuronBase.SimpleLayer(3, NeuronBase.LeakyReLUNeuron(0.0001))
 
-outputLayer = []
+outputLayer = NeuronBase.SimpleLayer(1, NeuronBase.SimpleNeuron())
 
-inputLayer.append(NeuronBase.SimpleNeuron())
+inputLayer.connectALT(middleLayerA,[[0,0.5,1]])
+middleLayerA.connectALT(middleLayerB,[[1,1,1],[-1,-1,-1],[0,0,1]])
+middleLayerB.connect(outputLayer)
 
-i = 0
-while i < 3:
-    middleLayerA.append(NeuronBase.SimpleNeuron())
-    i += 1
+inputLayer.setValues([1])
 
-i = 0
-while i < 3:
-    middleLayerB.append(NeuronBase.SimpleNeuron())
-    i += 1
+inputLayer.doCycle()
+print(inputLayer.getValues())
+print([[0,0.5,1]])
+middleLayerA.doCycle()
+print(middleLayerA.getValues())
+print([[1,1,1],[-1,-1,-1],[0,0,1]])
+middleLayerB.doCycle()
+print(middleLayerB.getValues())
+print([[1],[1],[1]])
+outputLayer.doCycle()
 
-outputLayer.append(NeuronBase.SimpleNeuron())
-
-for x in inputLayer:
-    x.initDendrites(middleLayerA)
-
-for x in middleLayerA:
-    x.initDendrites(middleLayerB)
-
-for x in middleLayerB:
-    x.initDendrites(outputLayer)
-
-for x in inputLayer:
-    x.resetValue()
-    x.setValue(1)
-    x.computeValue()
-    x.pushValue() 
-
-for x in middleLayerA:
-    x.computeValue()
-    x.pushValue() 
-
-for x in middleLayerB:
-    x.computeValue()
-    x.pushValue()
-
-print(outputLayer[0].value)
+print(outputLayer.getValues())
