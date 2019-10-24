@@ -1,4 +1,5 @@
 import copy
+import MyMath
 
 class Dendrite:
     #This class represents a one-way connection between two neurons. It also applies a stored weight to the value passed through it.
@@ -58,6 +59,13 @@ class SimpleNeuron:
             self.dendrites.append(Dendrite(weights[x],targetNeurons[x]))
             x += 1
 
+class SigmoidNeuron(SimpleNeuron):
+    #implementation of a sigmoid neuron
+    
+    def computeValue(self):#overwritten activation function
+        self.value = MyMath.sigmoid(self.value)
+    
+
 class ReLUNeuron(SimpleNeuron):
     #implementation of a rectified linear unit neuron
     def computeValue(self):#overwritten activation function
@@ -88,8 +96,8 @@ class SimpleLayer:
 
     def connectALT(self, nextLayer, weightsSquared):#SimpleLayer, table of tables of floats
         i=0 #setup of connections between the neurons this layer, and the next one with predefined weigths on them; intended use: debugging and loading of saved networks
-        for x in self.neurons:
-            x.initDendritesALT(nextLayer.neurons, weightsSquared[i])
+        for x in weightsSquared:
+            self.neurons[i].initDendritesALT(nextLayer.neurons, x)
             i += 1
 
     def doCycle(self):
