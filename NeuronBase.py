@@ -84,24 +84,6 @@ class LeakyReLUNeuron(SimpleNeuron):
         if self.value < 0:
             self.value = self.value * self.parameter
 
-class SoftmaxNeuron(SimpleNeuron):
-    def __init__(self):
-        self.valuesIn = []
-        self.valuesOut = []
-        self.value = self.valuesOut
-        self.dendrites = []
-
-    def addInput(self, inval):
-        self.valuesIn.append(inval)
-
-    def computeValue():
-        e = MyMath.exponent(1,100)
-        E = 0
-        for x in self.valuesIn:
-            E += e**x
-        for x in self.valuesIn:
-            self.valuesOut.append((e**x)/E)
-
 class SimpleLayer:
     #abstraction class, meant to facilitate the construction of layers for the user (and to hide some of the inner workings)
     def __init__(self, amountOfNeurons, neuronTemplate):#int, some neuron object
@@ -111,9 +93,9 @@ class SimpleLayer:
             self.neurons.append(copy.deepcopy(neuronTemplate))
             i += 1
 
-    def purgeDendritres(self):
+    def purgeDendrites(self):
         for x in self.neurons:
-            x.purgeConnections()
+            x.dendrites = []
 
     def connect(self, nextLayer):#SimpleLayer
         for x in self.neurons:#sets up the connections between the neurons in this layer, and the next one
@@ -141,26 +123,41 @@ class SimpleLayer:
         for x in self.neurons:
             out.append(x.value)
         return out
-        
+
+class SoftMaxLayer(SimpleLayer):
+
+    def doCycle(self):
+        e = MyMath.exponent(1,100)
+        n = []
+        E = 0
+        for x in self.neurons:
+            E += e**x.value
+        for x in self.neurons:
+            x.value = (e**x.value)/E
+            x.pushValue()
+    
 class SimpleNeuralNetwork:
 
-    def __init__(self, tableOfLayerTypes, tableOfLayerCounts, passResultThroughSoftmax):#table of Neuron objects; table of ints; boolean
+    def __init__(self, tableOfLayerTypes, tableOfLayerCounts):#table of Neuron objects or "SOFTMAX" strings; table of ints
         i = 0
-        self.PRTSM = passResultThoughSoftmax
         self.layers = []
         while i < len(tableOfLayerCounts):
-            self.layers.append(SimpleLayer(tableOfLayerCounts[i], tableOfLayerTypes[i]))
+            if type(tableOfLayerTypes[i])is str:
+                if tableOfLayerTypes[i]=="SOFTMAX":
+                    self.layers.append(SoftMaxLayer(tableOfLayerCounts[i], SimpleNeuron()))
+                else:
+                    print("Ya messed up, idiot. There is an illegeal input in the layertypes but i catched it")
+            else:
+                self.layers.append(SimpleLayer(tableOfLayerCounts[i], tableOfLayerTypes[i]))
             i += 1
-        if self.PRTSM:
-            self.layers.append(SimpleLayer(1,SoftmaxNeuron()))
-        i = 0
+        
         while i < (len(self.layers)-1):
             self.layers[i].connect(self.layers[i+1])
             i += 1
 
     def connectALT(self, weightsCubed):
         for x in self.layers:
-            x.purgeConnections()
+            x.purgeDendrites()
         i = 0
         while i < (len(self.layers)-1):
             self.layers[i].connectALT(self.layers[i+1], weightsCubed[i])
@@ -170,7 +167,4 @@ class SimpleNeuralNetwork:
         self.layers[0].setValues(inputTable)
         for x in self.layers:
             x.doCycle()
-        if self.PRTSM:
-            return self.layers[len(self.layers)-1].getValues[0]
-        else:
-            return self.layers[len(self.layers)-1].getValues[0]
+        return self.layers[len(self.layers)-1].getValues()
