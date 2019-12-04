@@ -1,5 +1,6 @@
 import copy
 import MyMath
+import random
 
 class Dendrite:
     #This class represents a one-way connection between two neurons. It also applies a stored weight to the value passed through it.
@@ -53,7 +54,8 @@ class SimpleNeuron:
     def initDendrites(self, targetNeurons):#table of neurons
         x = 0 #initialisation of connections to neurons in other layers
         while x < len(targetNeurons):
-            self.dendrites.append(Dendrite(1,targetNeurons[x]))
+            w = random.randint(0,1000)/1000.0
+            self.dendrites.append(Dendrite(w,targetNeurons[x]))
             x += 1
 
     def initDendritesALT(self, targetNeurons, weights):#table of neurons, table of floats
@@ -150,7 +152,8 @@ class SimpleNeuralNetwork:
             else:
                 self.layers.append(SimpleLayer(tableOfLayerCounts[i], tableOfLayerTypes[i]))
             i += 1
-        
+
+        i = 0
         while i < (len(self.layers)-1):
             self.layers[i].connect(self.layers[i+1])
             i += 1
@@ -168,3 +171,12 @@ class SimpleNeuralNetwork:
         for x in self.layers:
             x.doCycle()
         return self.layers[len(self.layers)-1].getValues()
+
+    def computeError(self, targetTable):
+        E = []
+        O = self.layers[len(self.layers)-1].getValues()
+        i = 0
+        while(i<len(O)):
+            E.append((O[i] - targetTable[i])**2)
+            i += 1
+        return E
