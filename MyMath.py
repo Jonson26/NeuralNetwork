@@ -1,11 +1,3 @@
-def exponent(x, i):#power, depth (int)
-    j = 0
-    s = 0
-    while j < i:
-        s += (x**j)/factorial(j)
-        j += 1
-    return s
-
 def factorial(x):#some integer
     i = 0
     p = 1
@@ -14,5 +6,15 @@ def factorial(x):#some integer
         p = p*i
     return p
 
+def exponent(x, i):#power, depth (int)
+    j = 0
+    s = 0
+    while j < i:
+        s += (x**j)/factorial(j)
+        j += 1
+    return s
+
+e = exponent(1, 100)
+
 def sigmoid(x):
-    return 1/(1 + exponent(-1*x, 100))
+    return 1/(1 + e**x)

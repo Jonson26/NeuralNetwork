@@ -1,6 +1,6 @@
-import NeuronBase as NB
+import NeuronFramework as NF
 
-NN = NB.SimpleNeuralNetwork([NB.SimpleNeuron(),NB.SigmoidNeuron(),NB.LeakyReLUNeuron(0.001),"SOFTMAX"],[1,3,3,3])
+NN = NF.SimpleNeuralNetwork([NF.SimpleNeuron(),NF.SigmoidNeuron(),NF.LeakyReLUNeuron(0.001),"SOFTMAX"],[1,3,3,3])
 #NN.connectALT([
 #    [[0,0.5,1]],
 #    [[1,1,1],[-1,-1,-1],[0,0,1]],
